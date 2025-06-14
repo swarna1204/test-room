@@ -207,10 +207,7 @@
                 text="value: ; align: center; wrapCount: 40">
             </a-text>
 
-            <!-- Close instruction -->
-            <a-text position="0 -0.8 0" align="center" width="6" color="#cccccc"
-                text="value: Look away or wait 8 seconds to close; align: center">
-            </a-text>
+
         </a-entity>
 
     </a-scene>
@@ -306,14 +303,6 @@
                         vrTextTitle.setAttribute('text', 'value: ' + title + '; align: center; wrapCount: 40');
                         vrText.setAttribute('text', 'value: ' + info + '; align: center; wrapCount: 60');
                         vrTextContainer.setAttribute('visible', true);
-
-                        // Hide after 8 seconds and show header again
-                        vrTextTimeout = setTimeout(function () {
-                            if (isVR) {
-                                vrTextContainer.setAttribute('visible', false);
-                                document.getElementById('vr-story-header').setAttribute('visible', true);
-                            }
-                        }, 8000);
                     } else {
                         // Show desktop overlay
                         showOverlay(title + ': ' + info);
@@ -339,28 +328,6 @@
                     }
                 });
             });
-
-            // Add raycaster hit detection for VR text hiding
-            const camera = document.querySelector('a-camera');
-            if (camera) {
-                const raycaster = camera.querySelector('a-cursor');
-                if (raycaster) {
-                    raycaster.addEventListener('raycaster-intersection-cleared', function (e) {
-                        if (isVR && e.detail.els.length === 0) {
-                            // User is looking away from all objects, hide VR text
-                            const vrTextContainer = document.getElementById('vr-text-container');
-                            if (vrTextContainer.getAttribute('visible')) {
-                                setTimeout(function () {
-                                    if (isVR) {
-                                        vrTextContainer.setAttribute('visible', false);
-                                        document.getElementById('vr-story-header').setAttribute('visible', true);
-                                    }
-                                }, 1000);
-                            }
-                        }
-                    });
-                }
-            }
         });
 
         function updateStoryHeader(title, subtitle) {
