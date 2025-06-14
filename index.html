@@ -191,7 +191,7 @@
         <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#2d2d2d">
         </a-plane>
 
-        <!-- VR Text Display for interactions - positioned much closer to user and higher Z-index -->
+        <!-- VR Text Display for interactions - positioned above the scene -->
         <a-entity id="vr-text-container" position="0 3 -2" visible="false">
             <!-- Background panel with higher opacity for better visibility -->
             <a-plane position="0 0 -0.1" width="12" height="3" color="#000000" opacity="0.9"
@@ -206,7 +206,6 @@
             <a-text id="vr-text-title" position="0 0.7 0" align="center" width="10" color="#4CC3D9"
                 text="value: ; align: center; wrapCount: 40">
             </a-text>
-
 
         </a-entity>
 
@@ -276,28 +275,15 @@
                         const vrText = document.getElementById('vr-text');
                         const vrTextTitle = document.getElementById('vr-text-title');
 
-                        // Position the text container in front of the user
+                        // Position the text container above the scene objects, not blocking the view
+                        vrTextContainer.setAttribute('position', '0 4 -6');
+
+                        // Make it face the camera for better readability
                         const camera = document.querySelector('a-camera');
                         const cameraEl = camera || document.querySelector('[camera]');
-
                         if (cameraEl) {
-                            // Get camera world position and rotation
                             const cameraPosition = cameraEl.getAttribute('position');
-                            const cameraRotation = cameraEl.getAttribute('rotation');
-
-                            // Position text container in front of camera
-                            const textPosition = {
-                                x: cameraPosition.x,
-                                y: cameraPosition.y + 0.5,
-                                z: cameraPosition.z - 3
-                            };
-
-                            vrTextContainer.setAttribute('position',
-                                `${textPosition.x} ${textPosition.y} ${textPosition.z}`);
-
-                            // Make it face the camera
-                            vrTextContainer.setAttribute('look-at',
-                                `${cameraPosition.x} ${cameraPosition.y} ${cameraPosition.z}`);
+                            vrTextContainer.setAttribute('look-at', `${cameraPosition.x} ${cameraPosition.y} ${cameraPosition.z}`);
                         }
 
                         vrTextTitle.setAttribute('text', 'value: ' + title + '; align: center; wrapCount: 40');
