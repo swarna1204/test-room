@@ -194,17 +194,17 @@
         <!-- VR Text Display for interactions - positioned above the scene -->
         <a-entity id="vr-text-container" position="0 3 -2" visible="false">
             <!-- Background panel with higher opacity for better visibility -->
-            <a-plane position="0 0 -0.1" width="12" height="3" color="#000000" opacity="0.9"
+            <a-plane position="0 0 -0.1" width="12" height="4" color="#000000" opacity="0.9"
                 material="transparent: true; side: double"></a-plane>
 
-            <!-- Main interaction text -->
-            <a-text id="vr-text" position="0 0.2 0" align="center" width="8" color="#ffffff"
-                text="value: Click an object!; align: center; wrapCount: 60">
+            <!-- Title text -->
+            <a-text id="vr-text-title" position="0 1.2 0" align="center" width="10" color="#4CC3D9"
+                text="value: ; align: center; wrapCount: 30">
             </a-text>
 
-            <!-- Title text -->
-            <a-text id="vr-text-title" position="0 0.7 0" align="center" width="10" color="#4CC3D9"
-                text="value: ; align: center; wrapCount: 40">
+            <!-- Main interaction text -->
+            <a-text id="vr-text" position="0 0 0" align="center" width="8" color="#ffffff"
+                text="value: Click an object!; align: center; wrapCount: 80">
             </a-text>
 
         </a-entity>
@@ -286,8 +286,8 @@
                             vrTextContainer.setAttribute('look-at', `${cameraPosition.x} ${cameraPosition.y} ${cameraPosition.z}`);
                         }
 
-                        vrTextTitle.setAttribute('text', 'value: ' + title + '; align: center; wrapCount: 40');
-                        vrText.setAttribute('text', 'value: ' + info + '; align: center; wrapCount: 60');
+                        vrTextTitle.setAttribute('text', 'value: ' + title + '; align: center; wrapCount: 30');
+                        vrText.setAttribute('text', 'value: ' + info + '; align: center; wrapCount: 80');
                         vrTextContainer.setAttribute('visible', true);
                     } else {
                         // Show desktop overlay
