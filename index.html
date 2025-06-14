@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Interactive A-Frame Scene</title>
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <style>
+        #overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            max-width: 300px;
+            z-index: 1000;
+            display: none;
+        }
+
+        #story-header {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #story-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0 0 8px 0;
+            background: linear-gradient(45deg, #4CC3D9, #FFE66D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #story-subtitle {
+            font-size: 16px;
+            margin: 0;
+            color: #cccccc;
+            font-style: italic;
+        }
+
+        #controls-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        #overlay button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Story Header -->
+    <div id="story-header">
+        <h1 id="story-title">My Journey to Frontend Development</h1>
+        <p id="story-subtitle">From mother to coder - discovering my path through late nights, learning, and limitless
+            dreams</p>
+    </div>
+
+    <!-- Text overlay for desktop -->
+    <div id="overlay">
+        <div id="overlay-text"></div>
+        <button onclick="closeOverlay()">Close</button>
+    </div>
+
+    <!-- Controls information -->
+    <div id="controls-info">
+        Mouse: Look around | WASD: Move | Click: Interact with objects
+    </div>
+
+    <a-scene background="color: #1a1a2e" vr-mode-ui="enabled: true">
+
+        <!-- Assets -->
+        <a-assets>
+            <!-- Preload any assets here if needed -->
+        </a-assets>
+
+        <!-- Lighting -->
+        <a-light type="ambient" color="#404040"></a-light>
+        <a-light type="directional" position="5 5 5"></a-light>
+
+        <!-- Camera with cursor and controls -->
+        <a-camera position="0 2 5" look-controls="enabled: true" wasd-controls="enabled: true"
+            cursor="fuse: false; rayOrigin: mouse">
+            <a-cursor geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" material="color: white"
+                raycaster="objects: .clickable" cursor="fuse: false">
+            </a-cursor>
+        </a-camera>
+
+        <!-- VR Controllers -->
+        <a-entity id="leftHand" hand-controls="hand: left" laser-controls raycaster="objects: .clickable">
+        </a-entity>
+
+        <a-entity id="rightHand" hand-controls="hand: right" laser-controls raycaster="objects: .clickable">
+        </a-entity>
+
+        <!-- VR Story Header (visible only in VR) -->
+        <a-entity id="vr-story-header" position="0 4.5 -6" visible="false">
+            <!-- Background panel for better readability -->
+            <a-plane position="0 0 -0.01" width="8" height="1.5" color="#000000" opacity="0.6"
+                material="transparent: true"></a-plane>
+
+            <!-- Main title -->
+            <a-text id="vr-story-title" position="0 0.3 0" align="center" width="6" color="#4CC3D9" font="roboto"
+                text="value: My Journey to Frontend Development; align: center">
+            </a-text>
+
+            <!-- Subtitle -->
+            <a-text id="vr-story-subtitle" position="0 -0.2 0" align="center" width="4" color="#cccccc" font="roboto"
+                text="value: From mother to coder - discovering my path through late nights, learning, and limitless dreams; align: center">
+            </a-text>
+        </a-entity>
+
+        <!-- 1. Cube (Far Left) - Balancing motherhood and ambition -->
+        <a-box class="clickable" position="-5 2 -3" color="#4CC3D9" scale="0.8 0.8 0.8"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 4000" data-title="Balancing Life & Dreams"
+            data-info="Balancing motherhood and ambition—my journey was about family as much as career.">
+        </a-box>
+
+        <!-- 2. Sphere (Left) - Late nights learning -->
+        <a-sphere class="clickable" position="-3 2.5 -4" radius="0.7" color="#FF6B6B"
+            animation="property: position; to: -3 3 -4; dir: alternate; loop: true; dur: 2000"
+            data-title="Sleepless Dedication"
+            data-info="Countless late nights learning, coding, and applying for jobs. Every click was a step forward.">
+        </a-sphere>
+
+        <!-- 3. Dodecahedron (Center-Left) - Growing roots -->
+        <a-dodecahedron class="clickable" position="-1 1.5 -2" radius="0.7" color="#DDA0DD"
+            animation="property: rotation; to: 360 360 0; loop: true; dur: 8000" data-title="Finding My Roots"
+            data-info="Roots take time. I was growing quietly in a new city, finding my place.">
+        </a-dodecahedron>
+
+        <!-- 4. Cylinder (Center) - YouTube learning -->
+        <a-cylinder class="clickable" position="0 2.5 -5" radius="0.6" height="1.5" color="#4ECDC4"
+            animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 3000"
+            data-title="My Digital Classroom"
+            data-info="YouTube was my classroom and my comfort—where I learned to code, drew inspiration from creators, and found motivation in stories beyond the screen.">
+        </a-cylinder>
+
+        <!-- 5. Octahedron (Center-Right) - Wall frames & milestones -->
+        <a-octahedron class="clickable" position="1 1.5 -2" radius="0.8" color="#FFB6C1"
+            animation="property: rotation; to: 0 360 360; loop: true; dur: 7000" data-title="Moments of Growth"
+            data-info="My wall frames capture moments of growth, lessons learned, obstacles faced, and milestones achieved—a daily reminder to pursue my dreams.">
+        </a-octahedron>
+
+        <!-- 6. Cone (Right) - Podcasts & music -->
+        <a-cone class="clickable" position="3 2.5 -3.5" radius-bottom="0.8" height="1.6" color="#FFE66D"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 5000" data-title="Fuel for the Soul"
+            data-info="Podcasts and music kept me company, fueling resilience and hope.">
+        </a-cone>
+
+        <!-- 7. Torus (Far Right) - The bright future -->
+        <a-torus class="clickable" position="5 2 -4" radius="0.7" radius-tubular="0.2" color="#A8E6CF"
+            animation="property: rotation; to: 360 0 360; loop: true; dur: 6000" data-title="Light on My Journey"
+            data-info="The light shines on my journey—filled with vision, hope, and new direction. At Hyper Island, I grew into a front-end developer. Now, I dream of taking my roots and wings to a product based company, blending UI/UX design with development and letting my ambitions soar.">
+        </a-torus>
+
+        <!-- Ground -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#2d2d2d">
+        </a-plane>
+
+        <!-- VR Text Display for interactions -->
+        <a-text id="vr-text" position="0 4.5 -6" align="center" width="6" color="#ffffff" visible="false"
+            text="value: Click an object!; align: center">
+            <!-- Background for interaction text -->
+            <a-plane position="0 0 -0.01" width="10" height="2" color="#000000" opacity="0.7"
+                material="transparent: true"></a-plane>
+        </a-text>
+
+    </a-scene>
+
+    <script>
+        let isVR = false;
+
+        // Wait for A-Frame to load
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Detect VR mode
+            const sceneEl = document.querySelector('a-scene');
+
+            sceneEl.addEventListener('enter-vr', function () {
+                isVR = true;
+                // Hide desktop elements
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('controls-info').style.display = 'none';
+                document.getElementById('story-header').style.display = 'none';
+
+                // Show VR story header
+                document.getElementById('vr-story-header').setAttribute('visible', true);
+            });
+
+            sceneEl.addEventListener('exit-vr', function () {
+                isVR = false;
+                const vrText = document.getElementById('vr-text');
+                vrText.setAttribute('visible', false);
+
+                // Show desktop elements
+                document.getElementById('controls-info').style.display = 'block';
+                document.getElementById('story-header').style.display = 'block';
+
+                // Hide VR story header
+                document.getElementById('vr-story-header').setAttribute('visible', false);
+            });
+
+            // Add click handlers to all clickable objects
+            const clickableObjects = document.querySelectorAll('.clickable');
+
+            clickableObjects.forEach(function (obj) {
+                obj.addEventListener('click', function (e) {
+                    const info = e.target.getAttribute('data-info');
+                    const title = e.target.getAttribute('data-title');
+
+                    // Update story headers (both desktop and VR)
+                    updateStoryHeader(title, info);
+
+                    if (isVR) {
+                        // Hide VR story header when showing interaction text
+                        document.getElementById('vr-story-header').setAttribute('visible', false);
+
+                        // Show text in VR
+                        const vrText = document.getElementById('vr-text');
+                        vrText.setAttribute('text', 'value: ' + title + ': ' + info + '; align: center');
+                        vrText.setAttribute('visible', true);
+
+                        // Hide after 6 seconds and show header again
+                        setTimeout(function () {
+                            if (isVR) {
+                                vrText.setAttribute('visible', false);
+                                document.getElementById('vr-story-header').setAttribute('visible', true);
+                            }
+                        }, 6000);
+                    } else {
+                        // Show desktop overlay
+                        showOverlay(title + ': ' + info);
+                    }
+
+                    // Scale effect on click
+                    e.target.setAttribute('animation__click', 'property: scale; to: 0.8 0.8 0.8; dur: 200');
+                    setTimeout(function () {
+                        e.target.setAttribute('animation__click', 'property: scale; to: 1 1 1; dur: 200');
+                    }, 200);
+                });
+
+                // Hover effects
+                obj.addEventListener('mouseenter', function (e) {
+                    if (!isVR) {
+                        e.target.setAttribute('scale', '1.1 1.1 1.1');
+                    }
+                });
+
+                obj.addEventListener('mouseleave', function (e) {
+                    if (!isVR) {
+                        e.target.setAttribute('scale', '1 1 1');
+                    }
+                });
+            });
+        });
+
+        function updateStoryHeader(title, subtitle) {
+            // Update desktop header
+            const storyTitle = document.getElementById('story-title');
+            const storySubtitle = document.getElementById('story-subtitle');
+            storyTitle.textContent = title;
+            storySubtitle.textContent = subtitle;
+
+            // Update VR header
+            const vrStoryTitle = document.getElementById('vr-story-title');
+            const vrStorySubtitle = document.getElementById('vr-story-subtitle');
+            vrStoryTitle.setAttribute('text', 'value: ' + title + '; align: center');
+            vrStorySubtitle.setAttribute('text', 'value: ' + subtitle + '; align: center');
+        }
+
+        function resetStoryHeader() {
+            updateStoryHeader('My Journey to Frontend Development', 'From mother to coder - discovering my path through late nights, learning, and limitless dreams');
+        }
+
+        function showOverlay(text) {
+            const overlay = document.getElementById('overlay');
+            const overlayText = document.getElementById('overlay-text');
+            overlayText.textContent = text;
+            overlay.style.display = 'block';
+        }
+
+        function closeOverlay() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Reset story header when clicking on empty space
+        document.addEventListener('click', function (e) {
+            if (!e.target.classList.contains('clickable') && !e.target.closest('#overlay') && !e.target.closest('#story-header')) {
+                resetStoryHeader();
+            }
+        });
+    </script>
+</body>
+
+</html>
