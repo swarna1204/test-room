@@ -289,8 +289,8 @@
                         vrText.setAttribute('text', 'value: ' + info + '; align: center; wrapCount: 80');
                         vrTextContainer.setAttribute('visible', true);
                     } else {
-                        // Show desktop overlay
-                        showOverlay(title + ': ' + info);
+                        // Show desktop overlay with specific object info
+                        showOverlay(title, info);
                     }
 
                     // Scale effect on click
@@ -333,10 +333,12 @@
             updateStoryHeader('My Journey to Frontend Development', 'From mother to coder - discovering my path through late nights, learning, and limitless dreams');
         }
 
-        function showOverlay(text) {
+        function showOverlay(title, info) {
             const overlay = document.getElementById('overlay');
             const overlayText = document.getElementById('overlay-text');
-            overlayText.textContent = text;
+
+            // Create formatted content with title and info
+            overlayText.innerHTML = `<strong>${title}</strong><br><br>${info}`;
             overlay.style.display = 'block';
         }
 
