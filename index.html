@@ -2,640 +2,237 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <title>Interactive Journey Story</title>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="utf-8" />
+    <title>Interactive A-Frame Scene — Fixed</title>
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <style>
         body {
             margin: 0;
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             overflow: hidden;
         }
 
-        /* Animated background particles */
-        .particles {
+        #overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            max-width: 300px;
+            z-index: 1000;
+            display: none;
         }
 
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px) rotate(0deg);
-                opacity: 0.3;
-            }
-
-            50% {
-                transform: translateY(-20px) rotate(180deg);
-                opacity: 0.8;
-            }
-        }
-
-        /* Main story header */
         #story-header {
             position: fixed;
             top: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(30, 30, 60, 0.95) 100%);
-            color: white;
-            padding: 25px 35px;
-            border-radius: 20px;
-            text-align: center;
-            z-index: 1000;
-            pointer-events: none;
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            min-width: 400px;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        #story-title {
-            margin: 0 0 10px 0;
-            font-size: 28px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 3s ease-in-out infinite;
-        }
-
-        #story-subtitle {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.5;
-        }
-
-        @keyframes gradientShift {
-
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        /* Instructions panel */
-        #instructions {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(30, 30, 60, 0.9) 100%);
-            color: white;
-            padding: 20px 25px;
-            border-radius: 15px;
-            z-index: 1000;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        #instructions:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        #instructions h4 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            font-weight: 600;
-            color: #4ecdc4;
-        }
-
-        #instructions p {
-            margin: 0;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        /* Progress indicator */
-        #progress {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(30, 30, 60, 0.9) 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 15px;
-            z-index: 1000;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            min-width: 120px;
-            text-align: center;
-        }
-
-        #progress h4 {
-            margin: 0 0 8px 0;
-            font-size: 14px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        #progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        #progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
-            border-radius: 3px;
-            width: 0%;
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        #progress-text {
-            margin-top: 8px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* Shape info cards */
-        .shape-info {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(30, 30, 60, 0.95) 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            z-index: 1000;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            max-width: 300px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
-        }
-
-        .shape-info.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .shape-info h4 {
-            margin: 0 0 8px 0;
-            font-size: 16px;
-            font-weight: 600;
-            color: #4ecdc4;
-        }
-
-        .shape-info p {
-            margin: 0;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.4;
-        }
-
-        /* Loading screen */
-        #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-        }
-
-        #loading.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .loader {
-            text-align: center;
-            color: white;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* VR/AR indicators */
-        .vr-indicator {
-            position: fixed;
-            bottom: 30px;
-            right: 350px;
             background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 12px;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
             z-index: 1000;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #story-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0 0 8px 0;
+            background: linear-gradient(45deg, #4CC3D9, #FFE66D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #story-subtitle {
+            font-size: 16px;
+            margin: 0;
+            color: #cccccc;
+            font-style: italic;
+        }
+
+        #controls-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        #overlay button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
-    <!-- Animated background particles -->
-    <div class="particles" id="particles"></div>
-
-    <!-- Loading screen -->
-    <div id="loading">
-        <div class="loader">
-            <div class="spinner"></div>
-            <h3>Loading Your Journey...</h3>
-            <p>Preparing interactive experience</p>
-        </div>
-    </div>
-
-    <!-- Main story header -->
     <div id="story-header">
-        <h2 id="story-title">A New City, A New Start</h2>
-        <p id="story-subtitle">Click on the floating shapes to explore my journey of growth and discovery</p>
+        <h1 id="story-title">A New City, A New Start</h1>
+        <p id="story-subtitle">My Hyper Island journey began here, where everything felt new and full of hope</p>
     </div>
 
-    <!-- Progress indicator -->
-    <div id="progress">
-        <h4>Journey Progress</h4>
-        <div id="progress-bar">
-            <div id="progress-fill"></div>
-        </div>
-        <p id="progress-text">0 of 4 stories discovered</p>
+    <div id="overlay">
+        <div id="overlay-text"></div>
+        <button onclick="closeOverlay()">Close</button>
     </div>
 
-    <!-- Instructions -->
-    <div id="instructions">
-        <h4>🎯 How to Explore</h4>
-        <p>Click or hover over the animated shapes to discover each part of my story</p>
+    <div id="controls-info">
+        Mouse: Look around | WASD: Move | Click: Interact with objects
     </div>
 
-    <!-- Shape info tooltip -->
-    <div class="shape-info" id="shape-info">
-        <h4 id="info-title">Shape Title</h4>
-        <p id="info-text">Shape description</p>
-    </div>
+    <a-scene background="color: #1a1a2e" vr-mode-ui="enabled: true">
+        <!-- Camera with mouse cursor -->
+        <a-entity id="rig" position="0 0 0">
+            <a-entity camera position="0 2 5" look-controls wasd-controls>
+                <a-cursor rayOrigin="mouse" fuse="false" raycaster="objects: .clickable"
+                    geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                    material="color: white; shader: flat">
+                </a-cursor>
+            </a-entity>
 
-    <!-- VR Indicator -->
-    <div class="vr-indicator">VR Ready</div>
-
-    <a-scene background="color: #0a0a0a" cursor="rayOrigin: mouse" vr-mode-ui="enabled: true">
-        <a-assets>
-            <!-- Define text materials for better VR readability -->
-            <a-mixin id="text-style" text="color: #ffffff; align: center; width: 8; wrapCount: 40; 
-                      font: roboto; baseline: center; alphaTest: 0.5"></a-mixin>
-        </a-assets>
-
-        <a-camera position="0 2 5">
-            <a-cursor geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-                material="color: #4ecdc4; shader: flat" raycaster="objects: .clickable"
-                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 1000">
-            </a-cursor>
-        </a-camera>
-
-        <!-- Enhanced lighting -->
-        <a-light type="ambient" color="#2a2a4a" intensity="0.6"></a-light>
-        <a-light type="directional" position="5 8 5" color="#ffffff" intensity="0.8"></a-light>
-        <a-light type="point" position="-5 5 5" color="#ff6b6b" intensity="0.3"></a-light>
-        <a-light type="point" position="5 5 -5" color="#4ecdc4" intensity="0.3"></a-light>
-
-        <!-- VR Text Overlay Panel (initially hidden) -->
-        <a-entity id="vr-text-overlay" position="0 2.5 -3" visible="false">
-            <!-- Background panel -->
-            <a-plane position="0 0 -0.01" width="6" height="3"
-                material="color: #000000; opacity: 0.8; transparent: true" geometry="primitive: plane"
-                animation__fadeIn="property: material.opacity; from: 0; to: 0.8; dur: 500; startEvents: showOverlay"
-                animation__fadeOut="property: material.opacity; from: 0.8; to: 0; dur: 500; startEvents: hideOverlay">
-            </a-plane>
-
-            <!-- Title text -->
-            <a-text id="vr-title" position="0 0.8 0" mixin="text-style"
-                text="value: Story Title; color: #4ecdc4; width: 10; font: roboto"
-                animation__slideIn="property: position; from: 0 1.2 0; to: 0 0.8 0; dur: 600; easing: easeOutQuad; startEvents: showOverlay"
-                animation__slideOut="property: position; from: 0 0.8 0; to: 0 1.2 0; dur: 400; easing: easeInQuad; startEvents: hideOverlay">
-            </a-text>
-
-            <!-- Content text -->
-            <a-text id="vr-content" position="0 0 0" mixin="text-style"
-                text="value: Story content goes here; color: #ffffff; width: 8; wrapCount: 45"
-                animation__slideIn="property: position; from: 0 -0.4 0; to: 0 0 0; dur: 600; delay: 200; easing: easeOutQuad; startEvents: showOverlay"
-                animation__slideOut="property: position; from: 0 0 0; to: 0 -0.4 0; dur: 400; easing: easeInQuad; startEvents: hideOverlay">
-            </a-text>
-
-            <!-- Close instruction -->
-            <a-text position="0 -1.2 0" mixin="text-style"
-                text="value: Look away or click another object to continue; color: #888888; width: 6; wrapCount: 35"
-                animation__fadeIn="property: text.color; from: #333333; to: #888888; dur: 800; delay: 1000; startEvents: showOverlay"
-                animation__fadeOut="property: text.color; from: #888888; to: #333333; dur: 400; startEvents: hideOverlay">
-            </a-text>
-
-            <!-- Decorative border -->
-            <a-ring position="0 0 -0.005" radius-inner="2.8" radius-outer="2.9"
-                material="color: #4ecdc4; opacity: 0.6; transparent: true"
-                animation__scaleIn="property: scale; from: 0.8 0.8 0.8; to: 1 1 1; dur: 600; easing: easeOutQuad; startEvents: showOverlay"
-                animation__scaleOut="property: scale; from: 1 1 1; to: 0.8 0.8 0.8; dur: 400; easing: easeInQuad; startEvents: hideOverlay">
-            </a-ring>
+            <!-- VR Controllers -->
+            <a-entity laser-controls="hand: left" raycaster="objects: .clickable"></a-entity>
+            <a-entity laser-controls="hand: right" raycaster="objects: .clickable"></a-entity>
         </a-entity>
 
-        <!-- Enhanced clickable objects with better materials -->
-        <a-box class="clickable" position="-3 1.5 -5"
-            material="color: #4CC3D9; metalness: 0.3; roughness: 0.4; emissive: #004466; emissiveIntensity: 0.2"
+        <!-- Lights -->
+        <a-light type="ambient" color="#404040"></a-light>
+        <a-light type="directional" position="5 5 5"></a-light>
+
+        <!-- VR Text Info -->
+        <a-entity id="vr-text" visible="false" position="0 3 -5">
+            <a-text id="vr-text-title" value="" align="center" color="#4CC3D9" width="6" position="0 0.3 0"></a-text>
+            <a-text id="vr-text-info" value="" align="center" color="#fff" width="5" position="0 -0.3 0"></a-text>
+        </a-entity>
+
+        <!-- 7 Story Objects (clickable) -->
+        <a-box class="clickable" position="-8 1.5 -5" color="#4CC3D9" scale="0.8 0.8 0.8"
             animation="property: rotation; to: 0 360 0; loop: true; dur: 4000" data-title="Balancing Life & Dreams"
-            data-info="Balancing motherhood and ambition—my journey was about family as much as career. Every decision I made had to consider both my personal growth and my responsibilities as a mother. Late nights were spent not just coding, but also ensuring my children felt loved and supported throughout this transition."
-            shadow="cast: true; receive: true">
+            data-info="Balancing motherhood and ambition—my journey was about family as much as career.">
         </a-box>
 
-        <a-sphere class="clickable" position="-1 1.5 -4" radius="0.7"
-            material="color: #FF6B6B; metalness: 0.2; roughness: 0.3; emissive: #660022; emissiveIntensity: 0.2"
+        <a-sphere class="clickable" position="-5.25 1.35 -6" radius="0.7" color="#FF6B6B"
+            animation="property: position; to: -5.25 1.85 -6; dir: alternate; loop: true; dur: 2000"
             data-title="Sleepless Dedication"
-            data-info="Countless late nights learning, coding, and applying for jobs. Every click was a step forward. The glow of my laptop screen became my constant companion as I pushed through tutorials, debugged code, and submitted application after application. Each rejection was a lesson, each small victory a reason to keep going."
-            animation="property: position; to: -1 2 -4; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"
-            shadow="cast: true; receive: true">
+            data-info="Countless late nights learning, coding, and applying for jobs. Every click was a step forward.">
         </a-sphere>
 
-        <a-cylinder class="clickable" position="1 1.5 -5" radius="0.6" height="1.5"
-            material="color: #4ECDC4; metalness: 0.4; roughness: 0.3; emissive: #002244; emissiveIntensity: 0.2"
+        <a-dodecahedron class="clickable" position="-2.5 1.2 -7" radius="0.7" color="#DDA0DD"
+            animation="property: rotation; to: 360 360 0; loop: true; dur: 8000" data-title="Finding My Roots"
+            data-info="Roots take time. I was growing quietly in a new city, finding my place.">
+        </a-dodecahedron>
+
+        <a-cylinder class="clickable" position="0 1.8 -9" radius="0.6" height="1.5" color="#4ECDC4"
+            animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 3000"
             data-title="My Digital Classroom"
-            data-info="YouTube was my classroom and my comfort—where I learned to code, drew inspiration from creators, and found motivation. From JavaScript fundamentals to React frameworks, every video was a building block. The comment sections became my study groups, and the creators became my mentors from afar."
-            animation="property: rotation; to: 0 0 360; loop: true; dur: 5000" shadow="cast: true; receive: true">
+            data-info="YouTube was my classroom and my comfort—where I learned to code, drew inspiration from creators, and found motivation in stories beyond the screen.">
         </a-cylinder>
 
-        <a-cone class="clickable" position="3 1.5 -4" radius-bottom="0.8" height="1.6"
-            material="color: #FFE66D; metalness: 0.2; roughness: 0.4; emissive: #442200; emissiveIntensity: 0.2"
-            data-title="Fuel for the Soul"
-            data-info="Podcasts and music kept me company, fueling resilience and hope during my journey. During long coding sessions, motivational podcasts reminded me why I started. Music became the soundtrack to my transformation, each playlist marking different phases of growth and determination."
-            animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2500; easing: easeInOutQuad"
-            shadow="cast: true; receive: true">
+        <a-octahedron class="clickable" position="2.5 1.2 -7" radius="0.8" color="#FFB6C1"
+            animation="property: rotation; to: 0 360 360; loop: true; dur: 7000" data-title="Moments of Growth"
+            data-info="My wall frames capture moments of growth, lessons learned, obstacles faced, and milestones achieved—a daily reminder to pursue my dreams.">
+        </a-octahedron>
+
+        <a-cone class="clickable" position="3.5 2 -4" radius-bottom="0.8" height="1.6" color="#FFE66D"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 5000" data-title="Fuel for the Soul"
+            data-info="Podcasts and music kept me company, fueling resilience and hope.">
         </a-cone>
 
-        <!-- Enhanced environment -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="25" height="25"
-            material="color: #1a1a2e; metalness: 0.8; roughness: 0.2" shadow="receive: true"></a-plane>
+        <a-torus class="clickable" position="8 1.5 -5" radius="0.7" radius-tubular="0.2" color="#A8E6CF"
+            animation="property: rotation; to: 360 0 360; loop: true; dur: 6000" data-title="Light on My Journey"
+            data-info="The light shines on my journey—filled with vision, hope, and new direction. At Hyper Island, I grew into a front-end developer. Now, I dream of taking my roots and wings to a product-based company, blending UI/UX design with development and letting my ambitions soar.">
+        </a-torus>
 
-        <!-- Atmospheric fog -->
-        <a-sky color="#0f0f23"></a-sky>
+        <!-- Ground -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#2d2d2d"></a-plane>
     </a-scene>
 
     <script>
-        let clickedShapes = new Set();
-        let totalShapes = 4;
-        let currentOverlay = null;
-        let overlayTimeout = null;
+        let isVR = false;
 
-        // Create animated background particles
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            for (let i = 0; i < 50; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (3 + Math.random() * 3) + 's';
-                particlesContainer.appendChild(particle);
-            }
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const sceneEl = document.querySelector('a-scene');
 
-        function updateProgress() {
-            const progress = (clickedShapes.size / totalShapes) * 100;
-            document.getElementById('progress-fill').style.width = progress + '%';
-            document.getElementById('progress-text').textContent =
-                `${clickedShapes.size} of ${totalShapes} stories discovered`;
-        }
+            sceneEl.addEventListener('enter-vr', () => {
+                isVR = true;
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('controls-info').style.display = 'none';
+                document.getElementById('story-header').style.display = 'none';
+            });
 
-        function showStoryContent(title, info) {
-            document.getElementById('story-title').textContent = title;
-            document.getElementById('story-subtitle').textContent = info;
+            sceneEl.addEventListener('exit-vr', () => {
+                isVR = false;
+                document.getElementById('controls-info').style.display = 'block';
+                document.getElementById('story-header').style.display = 'block';
+                document.getElementById('vr-text').setAttribute('visible', false);
+            });
 
-            // Add subtle animation to header
-            const header = document.getElementById('story-header');
-            header.style.transform = 'translateX(-50%) scale(1.02)';
-            setTimeout(() => {
-                header.style.transform = 'translateX(-50%) scale(1)';
-            }, 200);
-        }
+            const clickableObjects = document.querySelectorAll('.clickable');
 
-        function showShapeInfo(title, info) {
-            document.getElementById('info-title').textContent = title;
-            document.getElementById('info-text').textContent = info;
-            document.getElementById('shape-info').classList.add('show');
-        }
+            clickableObjects.forEach(obj => {
+                obj.addEventListener('click', e => {
+                    const title = e.currentTarget.getAttribute('data-title');
+                    const info = e.currentTarget.getAttribute('data-info');
 
-        function hideShapeInfo() {
-            document.getElementById('shape-info').classList.remove('show');
-        }
+                    updateStoryHeader(title, info);
 
-        // VR Text Overlay Functions
-        function showVROverlay(title, content) {
-            const overlay = document.getElementById('vr-text-overlay');
-            const vrTitle = document.getElementById('vr-title');
-            const vrContent = document.getElementById('vr-content');
-
-            // Update text content
-            vrTitle.setAttribute('text', 'value', title);
-            vrContent.setAttribute('text', 'value', content);
-
-            // Show overlay
-            overlay.setAttribute('visible', true);
-            overlay.emit('showOverlay');
-
-            currentOverlay = overlay;
-
-            // Auto-hide after 8 seconds
-            if (overlayTimeout) clearTimeout(overlayTimeout);
-            overlayTimeout = setTimeout(() => {
-                hideVROverlay();
-            }, 8000);
-        }
-
-        function hideVROverlay() {
-            if (currentOverlay) {
-                currentOverlay.emit('hideOverlay');
-                setTimeout(() => {
-                    currentOverlay.setAttribute('visible', false);
-                    currentOverlay = null;
-                }, 500);
-            }
-            if (overlayTimeout) {
-                clearTimeout(overlayTimeout);
-                overlayTimeout = null;
-            }
-        }
-
-        // Check if in VR mode
-        function isInVR() {
-            const scene = document.querySelector('a-scene');
-            return scene && scene.is('vr-mode');
-        }
-
-        // Initialize particles
-        createParticles();
-
-        // Scene loading and interaction setup
-        document.addEventListener('DOMContentLoaded', function () {
-            const scene = document.querySelector('a-scene');
-
-            scene.addEventListener('loaded', function () {
-                // Hide loading screen
-                setTimeout(() => {
-                    document.getElementById('loading').classList.add('hidden');
-                }, 1000);
-
-                const clickables = document.querySelectorAll('.clickable');
-
-                clickables.forEach((el, index) => {
-                    el.addEventListener('click', function (evt) {
-                        const title = el.getAttribute('data-title');
-                        const info = el.getAttribute('data-info');
-
-                        clickedShapes.add(index);
-                        updateProgress();
-
-                        // Hide any existing VR overlay first
-                        hideVROverlay();
-
-                        // Show appropriate content based on mode
-                        if (isInVR()) {
-                            // In VR mode - show 3D text overlay
-                            setTimeout(() => {
-                                showVROverlay(title, info);
-                            }, 100);
-                        } else {
-                            // In desktop mode - update 2D UI
-                            showStoryContent(title, info);
-                        }
-
-                        // Enhanced click animation
-                        el.setAttribute('animation__click',
-                            'property: scale; to: 1.3 1.3 1.3; dur: 150; easing: easeOutQuad');
-                        setTimeout(() => {
-                            el.setAttribute('animation__click',
-                                'property: scale; to: 1 1 1; dur: 300; easing: easeInOutQuad');
-                        }, 150);
-
-                        // Particle burst effect (visual feedback)
-                        createClickParticles(evt.detail.intersection.point);
-                    });
-
-                    el.addEventListener('mouseenter', function () {
-                        const title = el.getAttribute('data-title');
-                        const info = el.getAttribute('data-info');
-
-                        // Only show hover info in desktop mode
-                        if (!isInVR()) {
-                            showShapeInfo(title, info);
-                        }
-
-                        // Hover glow effect
-                        el.setAttribute('animation__hover',
-                            'property: scale; to: 1.1 1.1 1.1; dur: 200; easing: easeOutQuad');
-                    });
-
-                    el.addEventListener('mouseleave', function () {
-                        if (!isInVR()) {
-                            hideShapeInfo();
-                        }
-                        el.setAttribute('animation__hover',
-                            'property: scale; to: 1 1 1; dur: 200; easing: easeInOutQuad');
-                    });
-                });
-
-                // VR mode change detection
-                scene.addEventListener('enter-vr', function () {
-                    console.log('Entered VR mode');
-                    hideShapeInfo(); // Hide desktop tooltips
-                });
-
-                scene.addEventListener('exit-vr', function () {
-                    console.log('Exited VR mode');
-                    hideVROverlay(); // Hide VR overlays
-                });
-
-                // Camera movement detection to hide VR overlay
-                const camera = document.querySelector('a-camera');
-                let lastCameraPosition = camera.getAttribute('position');
-
-                setInterval(() => {
-                    if (currentOverlay && isInVR()) {
-                        const currentPosition = camera.getAttribute('position');
-                        const moved = Math.abs(currentPosition.x - lastCameraPosition.x) > 0.5 ||
-                            Math.abs(currentPosition.y - lastCameraPosition.y) > 0.5 ||
-                            Math.abs(currentPosition.z - lastCameraPosition.z) > 0.5;
-
-                        if (moved) {
-                            hideVROverlay();
-                        }
-                        lastCameraPosition = currentPosition;
+                    if (isVR) {
+                        showVRText(title, info);
+                    } else {
+                        showOverlay(title, info);
                     }
-                }, 500);
 
-                // Check if all stories discovered
-                setInterval(() => {
-                    if (clickedShapes.size === totalShapes) {
-                        document.getElementById('instructions').innerHTML =
-                            '<h4>🎉 Journey Complete!</h4><p>You\'ve discovered all parts of my story. Thank you for exploring!</p>';
-                    }
-                }, 1000);
+                    e.currentTarget.setAttribute('animation__click', 'property: scale; to: 0.8 0.8 0.8; dur: 200');
+                    setTimeout(() => {
+                        e.currentTarget.setAttribute('animation__click', 'property: scale; to: 1 1 1; dur: 200');
+                    }, 200);
+                });
             });
         });
 
-        function createClickParticles(position) {
-            // This would create a visual particle effect at click position
-            // Implementation would require additional A-Frame components
-            console.log('Particle effect at:', position);
+        function updateStoryHeader(title, subtitle) {
+            document.getElementById('story-title').textContent = title;
+            document.getElementById('story-subtitle').textContent = subtitle;
         }
 
-        // Keyboard shortcut to hide VR overlay (for testing)
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape' || event.key === 'h') {
-                hideVROverlay();
-            }
-        });
+        function showOverlay(title, info) {
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-text').innerHTML = `<strong>${title}</strong><br><br>${info}`;
+            overlay.style.display = 'block';
+        }
+
+        function showVRText(title, info) {
+            const vrText = document.getElementById('vr-text');
+            const vrTitle = document.getElementById('vr-text-title');
+            const vrInfo = document.getElementById('vr-text-info');
+
+            vrTitle.setAttribute('value', title);
+            vrInfo.setAttribute('value', info);
+            vrText.setAttribute('visible', true);
+        }
+
+        function closeOverlay() {
+            document.getElementById('overlay').style.display = 'none';
+        }
     </script>
 </body>
 
