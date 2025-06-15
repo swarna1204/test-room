@@ -263,21 +263,6 @@
                 transform: rotate(360deg);
             }
         }
-
-        /* VR/AR indicators */
-        .vr-indicator {
-            position: fixed;
-            bottom: 30px;
-            right: 350px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 12px;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
     </style>
 </head>
 
@@ -321,8 +306,6 @@
         <p id="info-text">Shape description</p>
     </div>
 
-    <!-- VR Indicator removed -->
-
     <a-scene background="color: #0a0a0a" vr-mode-ui="enabled: true">
         <!-- VR Controllers and hands -->
         <a-entity id="leftHand" hand-controls="hand: left; handModelStyle: lowPoly; color: #ffcccc"></a-entity>
@@ -336,37 +319,22 @@
             </a-cursor>
         </a-camera>
 
-        <!-- VR UI Text Panels -->
-        <a-text id="vr-title" position="0 3.5 -3"
-            text="value: A New City, A New Start; color: #4ecdc4; align: center; width: 12; font: roboto"
-            visible="false">
-        </a-text>
-
-        <a-text id="vr-subtitle" position="0 3 -3"
-            text="value: Click on the floating shapes to explore my journey; color: white; align: center; width: 8; font: roboto"
-            visible="false">
-        </a-text>
-
-        <a-text id="vr-progress" position="2.5 3.5 -3"
-            text="value: 0/4 Stories; color: #ff6b6b; align: center; width: 6; font: roboto" visible="false">
-        </a-text>
-
-        <!-- Enhanced lighting -->
-        <a-light type="ambient" color="#2a2a4a" intensity="0.6"></a-light>
-        <a-light type="directional" position="5 8 5" color="#ffffff" intensity="0.8"></a-light>
-        <a-light type="point" position="-5 5 5" color="#ff6b6b" intensity="0.3"></a-light>
-        <a-light type="point" position="5 5 -5" color="#4ecdc4" intensity="0.3"></a-light>
+        <!-- Softer lighting setup -->
+        <a-light type="ambient" color="#2a2a4a" intensity="0.4"></a-light>
+        <a-light type="directional" position="3 5 3" color="#ffffff" intensity="0.3"></a-light>
+        <a-light type="point" position="-3 3 3" color="#ff6b6b" intensity="0.2"></a-light>
+        <a-light type="point" position="3 3 -3" color="#4ecdc4" intensity="0.2"></a-light>
 
         <!-- Enhanced clickable objects with VR controller support -->
         <a-box class="clickable" position="-3 1.5 -5"
-            material="color: #4CC3D9; metalness: 0.3; roughness: 0.4; emissive: #004466; emissiveIntensity: 0.2"
+            material="color: #4CC3D9; metalness: 0.3; roughness: 0.4; emissive: #004466; emissiveIntensity: 0.1"
             animation="property: rotation; to: 0 360 0; loop: true; dur: 4000" data-title="Balancing Life & Dreams"
             data-info="Balancing motherhood and ambition—my journey was about family as much as career."
             shadow="cast: true; receive: true" raycaster-target>
         </a-box>
 
         <a-sphere class="clickable" position="-1 1.5 -4" radius="0.7"
-            material="color: #FF6B6B; metalness: 0.2; roughness: 0.3; emissive: #660022; emissiveIntensity: 0.2"
+            material="color: #FF6B6B; metalness: 0.2; roughness: 0.3; emissive: #660022; emissiveIntensity: 0.1"
             data-title="Sleepless Dedication"
             data-info="Countless late nights learning, coding, and applying for jobs. Every click was a step forward."
             animation="property: position; to: -1 2 -4; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"
@@ -374,7 +342,7 @@
         </a-sphere>
 
         <a-cylinder class="clickable" position="1 1.5 -5" radius="0.6" height="1.5"
-            material="color: #4ECDC4; metalness: 0.4; roughness: 0.3; emissive: #002244; emissiveIntensity: 0.2"
+            material="color: #4ECDC4; metalness: 0.4; roughness: 0.3; emissive: #002244; emissiveIntensity: 0.1"
             data-title="My Digital Classroom"
             data-info="YouTube was my classroom and my comfort—where I learned to code, drew inspiration from creators, and found motivation."
             animation="property: rotation; to: 0 0 360; loop: true; dur: 5000" shadow="cast: true; receive: true"
@@ -382,7 +350,7 @@
         </a-cylinder>
 
         <a-cone class="clickable" position="3 1.5 -4" radius-bottom="0.8" height="1.6"
-            material="color: #FFE66D; metalness: 0.2; roughness: 0.4; emissive: #442200; emissiveIntensity: 0.2"
+            material="color: #FFE66D; metalness: 0.2; roughness: 0.4; emissive: #442200; emissiveIntensity: 0.1"
             data-title="Fuel for the Soul"
             data-info="Podcasts and music kept me company, fueling resilience and hope during my journey."
             animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2500; easing: easeInOutQuad"
@@ -391,9 +359,9 @@
 
         <!-- Enhanced environment -->
         <a-plane position="0 0 0" rotation="-90 0 0" width="25" height="25"
-            material="color: #1a1a2e; metalness: 0.8; roughness: 0.2" shadow="receive: true"></a-plane>
+            material="color: #1a1a2e; metalness: 0.6; roughness: 0.3" shadow="receive: true"></a-plane>
 
-        <!-- Atmospheric fog -->
+        <!-- Atmospheric sky -->
         <a-sky color="#0f0f23"></a-sky>
     </a-scene>
 
