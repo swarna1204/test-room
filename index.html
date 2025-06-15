@@ -263,6 +263,21 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* VR/AR indicators */
+        .vr-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 350px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 
@@ -306,68 +321,111 @@
         <p id="info-text">Shape description</p>
     </div>
 
-    <a-scene background="color: #0a0a0a" vr-mode-ui="enabled: true">
-        <!-- VR Controllers and hands -->
-        <a-entity id="leftHand" hand-controls="hand: left; handModelStyle: lowPoly; color: #ffcccc"></a-entity>
-        <a-entity id="rightHand" hand-controls="hand: right; handModelStyle: lowPoly; color: #ffcccc"></a-entity>
+    <!-- VR Indicator -->
+    <div class="vr-indicator">VR Ready</div>
 
-        <!-- Desktop cursor -->
-        <a-camera position="0 2 5" cursor="rayOrigin: mouse">
+    <a-scene background="color: #0a0a0a" cursor="rayOrigin: mouse" vr-mode-ui="enabled: true">
+        <a-assets>
+            <!-- Define text materials for better VR readability -->
+            <a-mixin id="text-style" text="color: #ffffff; align: center; width: 8; wrapCount: 40; 
+                      font: roboto; baseline: center; alphaTest: 0.5"></a-mixin>
+        </a-assets>
+
+        <a-camera position="0 2 5">
             <a-cursor geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                 material="color: #4ecdc4; shader: flat" raycaster="objects: .clickable"
                 animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 1000">
             </a-cursor>
         </a-camera>
 
-        <!-- Softer lighting setup -->
-        <a-light type="ambient" color="#2a2a4a" intensity="0.4"></a-light>
-        <a-light type="directional" position="3 5 3" color="#ffffff" intensity="0.3"></a-light>
-        <a-light type="point" position="-3 3 3" color="#ff6b6b" intensity="0.2"></a-light>
-        <a-light type="point" position="3 3 -3" color="#4ecdc4" intensity="0.2"></a-light>
+        <!-- Enhanced lighting -->
+        <a-light type="ambient" color="#2a2a4a" intensity="0.6"></a-light>
+        <a-light type="directional" position="5 8 5" color="#ffffff" intensity="0.8"></a-light>
+        <a-light type="point" position="-5 5 5" color="#ff6b6b" intensity="0.3"></a-light>
+        <a-light type="point" position="5 5 -5" color="#4ecdc4" intensity="0.3"></a-light>
 
-        <!-- Enhanced clickable objects with VR controller support -->
+        <!-- VR Text Overlay Panel (initially hidden) -->
+        <a-entity id="vr-text-overlay" position="0 2.5 -3" visible="false">
+            <!-- Background panel -->
+            <a-plane position="0 0 -0.01" width="6" height="3"
+                material="color: #000000; opacity: 0.8; transparent: true" geometry="primitive: plane"
+                animation__fadeIn="property: material.opacity; from: 0; to: 0.8; dur: 500; startEvents: showOverlay"
+                animation__fadeOut="property: material.opacity; from: 0.8; to: 0; dur: 500; startEvents: hideOverlay">
+            </a-plane>
+
+            <!-- Title text -->
+            <a-text id="vr-title" position="0 0.8 0" mixin="text-style"
+                text="value: Story Title; color: #4ecdc4; width: 10; font: roboto"
+                animation__slideIn="property: position; from: 0 1.2 0; to: 0 0.8 0; dur: 600; easing: easeOutQuad; startEvents: showOverlay"
+                animation__slideOut="property: position; from: 0 0.8 0; to: 0 1.2 0; dur: 400; easing: easeInQuad; startEvents: hideOverlay">
+            </a-text>
+
+            <!-- Content text -->
+            <a-text id="vr-content" position="0 0 0" mixin="text-style"
+                text="value: Story content goes here; color: #ffffff; width: 8; wrapCount: 45"
+                animation__slideIn="property: position; from: 0 -0.4 0; to: 0 0 0; dur: 600; delay: 200; easing: easeOutQuad; startEvents: showOverlay"
+                animation__slideOut="property: position; from: 0 0 0; to: 0 -0.4 0; dur: 400; easing: easeInQuad; startEvents: hideOverlay">
+            </a-text>
+
+            <!-- Close instruction -->
+            <a-text position="0 -1.2 0" mixin="text-style"
+                text="value: Look away or click another object to continue; color: #888888; width: 6; wrapCount: 35"
+                animation__fadeIn="property: text.color; from: #333333; to: #888888; dur: 800; delay: 1000; startEvents: showOverlay"
+                animation__fadeOut="property: text.color; from: #888888; to: #333333; dur: 400; startEvents: hideOverlay">
+            </a-text>
+
+            <!-- Decorative border -->
+            <a-ring position="0 0 -0.005" radius-inner="2.8" radius-outer="2.9"
+                material="color: #4ecdc4; opacity: 0.6; transparent: true"
+                animation__scaleIn="property: scale; from: 0.8 0.8 0.8; to: 1 1 1; dur: 600; easing: easeOutQuad; startEvents: showOverlay"
+                animation__scaleOut="property: scale; from: 1 1 1; to: 0.8 0.8 0.8; dur: 400; easing: easeInQuad; startEvents: hideOverlay">
+            </a-ring>
+        </a-entity>
+
+        <!-- Enhanced clickable objects with better materials -->
         <a-box class="clickable" position="-3 1.5 -5"
-            material="color: #4CC3D9; metalness: 0.3; roughness: 0.4; emissive: #004466; emissiveIntensity: 0.1"
+            material="color: #4CC3D9; metalness: 0.3; roughness: 0.4; emissive: #004466; emissiveIntensity: 0.2"
             animation="property: rotation; to: 0 360 0; loop: true; dur: 4000" data-title="Balancing Life & Dreams"
-            data-info="Balancing motherhood and ambition—my journey was about family as much as career."
-            shadow="cast: true; receive: true" raycaster-target>
+            data-info="Balancing motherhood and ambition—my journey was about family as much as career. Every decision I made had to consider both my personal growth and my responsibilities as a mother. Late nights were spent not just coding, but also ensuring my children felt loved and supported throughout this transition."
+            shadow="cast: true; receive: true">
         </a-box>
 
         <a-sphere class="clickable" position="-1 1.5 -4" radius="0.7"
-            material="color: #FF6B6B; metalness: 0.2; roughness: 0.3; emissive: #660022; emissiveIntensity: 0.1"
+            material="color: #FF6B6B; metalness: 0.2; roughness: 0.3; emissive: #660022; emissiveIntensity: 0.2"
             data-title="Sleepless Dedication"
-            data-info="Countless late nights learning, coding, and applying for jobs. Every click was a step forward."
+            data-info="Countless late nights learning, coding, and applying for jobs. Every click was a step forward. The glow of my laptop screen became my constant companion as I pushed through tutorials, debugged code, and submitted application after application. Each rejection was a lesson, each small victory a reason to keep going."
             animation="property: position; to: -1 2 -4; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"
-            shadow="cast: true; receive: true" raycaster-target>
+            shadow="cast: true; receive: true">
         </a-sphere>
 
         <a-cylinder class="clickable" position="1 1.5 -5" radius="0.6" height="1.5"
-            material="color: #4ECDC4; metalness: 0.4; roughness: 0.3; emissive: #002244; emissiveIntensity: 0.1"
+            material="color: #4ECDC4; metalness: 0.4; roughness: 0.3; emissive: #002244; emissiveIntensity: 0.2"
             data-title="My Digital Classroom"
-            data-info="YouTube was my classroom and my comfort—where I learned to code, drew inspiration from creators, and found motivation."
-            animation="property: rotation; to: 0 0 360; loop: true; dur: 5000" shadow="cast: true; receive: true"
-            raycaster-target>
+            data-info="YouTube was my classroom and my comfort—where I learned to code, drew inspiration from creators, and found motivation. From JavaScript fundamentals to React frameworks, every video was a building block. The comment sections became my study groups, and the creators became my mentors from afar."
+            animation="property: rotation; to: 0 0 360; loop: true; dur: 5000" shadow="cast: true; receive: true">
         </a-cylinder>
 
         <a-cone class="clickable" position="3 1.5 -4" radius-bottom="0.8" height="1.6"
-            material="color: #FFE66D; metalness: 0.2; roughness: 0.4; emissive: #442200; emissiveIntensity: 0.1"
+            material="color: #FFE66D; metalness: 0.2; roughness: 0.4; emissive: #442200; emissiveIntensity: 0.2"
             data-title="Fuel for the Soul"
-            data-info="Podcasts and music kept me company, fueling resilience and hope during my journey."
+            data-info="Podcasts and music kept me company, fueling resilience and hope during my journey. During long coding sessions, motivational podcasts reminded me why I started. Music became the soundtrack to my transformation, each playlist marking different phases of growth and determination."
             animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2500; easing: easeInOutQuad"
-            shadow="cast: true; receive: true" raycaster-target>
+            shadow="cast: true; receive: true">
         </a-cone>
 
         <!-- Enhanced environment -->
         <a-plane position="0 0 0" rotation="-90 0 0" width="25" height="25"
-            material="color: #1a1a2e; metalness: 0.6; roughness: 0.3" shadow="receive: true"></a-plane>
+            material="color: #1a1a2e; metalness: 0.8; roughness: 0.2" shadow="receive: true"></a-plane>
 
-        <!-- Atmospheric sky -->
+        <!-- Atmospheric fog -->
         <a-sky color="#0f0f23"></a-sky>
     </a-scene>
 
     <script>
         let clickedShapes = new Set();
         let totalShapes = 4;
+        let currentOverlay = null;
+        let overlayTimeout = null;
 
         // Create animated background particles
         function createParticles() {
@@ -412,6 +470,49 @@
             document.getElementById('shape-info').classList.remove('show');
         }
 
+        // VR Text Overlay Functions
+        function showVROverlay(title, content) {
+            const overlay = document.getElementById('vr-text-overlay');
+            const vrTitle = document.getElementById('vr-title');
+            const vrContent = document.getElementById('vr-content');
+
+            // Update text content
+            vrTitle.setAttribute('text', 'value', title);
+            vrContent.setAttribute('text', 'value', content);
+
+            // Show overlay
+            overlay.setAttribute('visible', true);
+            overlay.emit('showOverlay');
+
+            currentOverlay = overlay;
+
+            // Auto-hide after 8 seconds
+            if (overlayTimeout) clearTimeout(overlayTimeout);
+            overlayTimeout = setTimeout(() => {
+                hideVROverlay();
+            }, 8000);
+        }
+
+        function hideVROverlay() {
+            if (currentOverlay) {
+                currentOverlay.emit('hideOverlay');
+                setTimeout(() => {
+                    currentOverlay.setAttribute('visible', false);
+                    currentOverlay = null;
+                }, 500);
+            }
+            if (overlayTimeout) {
+                clearTimeout(overlayTimeout);
+                overlayTimeout = null;
+            }
+        }
+
+        // Check if in VR mode
+        function isInVR() {
+            const scene = document.querySelector('a-scene');
+            return scene && scene.is('vr-mode');
+        }
+
         // Initialize particles
         createParticles();
 
@@ -434,7 +535,20 @@
 
                         clickedShapes.add(index);
                         updateProgress();
-                        showStoryContent(title, info);
+
+                        // Hide any existing VR overlay first
+                        hideVROverlay();
+
+                        // Show appropriate content based on mode
+                        if (isInVR()) {
+                            // In VR mode - show 3D text overlay
+                            setTimeout(() => {
+                                showVROverlay(title, info);
+                            }, 100);
+                        } else {
+                            // In desktop mode - update 2D UI
+                            showStoryContent(title, info);
+                        }
 
                         // Enhanced click animation
                         el.setAttribute('animation__click',
@@ -452,7 +566,10 @@
                         const title = el.getAttribute('data-title');
                         const info = el.getAttribute('data-info');
 
-                        showShapeInfo(title, info);
+                        // Only show hover info in desktop mode
+                        if (!isInVR()) {
+                            showShapeInfo(title, info);
+                        }
 
                         // Hover glow effect
                         el.setAttribute('animation__hover',
@@ -460,11 +577,42 @@
                     });
 
                     el.addEventListener('mouseleave', function () {
-                        hideShapeInfo();
+                        if (!isInVR()) {
+                            hideShapeInfo();
+                        }
                         el.setAttribute('animation__hover',
                             'property: scale; to: 1 1 1; dur: 200; easing: easeInOutQuad');
                     });
                 });
+
+                // VR mode change detection
+                scene.addEventListener('enter-vr', function () {
+                    console.log('Entered VR mode');
+                    hideShapeInfo(); // Hide desktop tooltips
+                });
+
+                scene.addEventListener('exit-vr', function () {
+                    console.log('Exited VR mode');
+                    hideVROverlay(); // Hide VR overlays
+                });
+
+                // Camera movement detection to hide VR overlay
+                const camera = document.querySelector('a-camera');
+                let lastCameraPosition = camera.getAttribute('position');
+
+                setInterval(() => {
+                    if (currentOverlay && isInVR()) {
+                        const currentPosition = camera.getAttribute('position');
+                        const moved = Math.abs(currentPosition.x - lastCameraPosition.x) > 0.5 ||
+                            Math.abs(currentPosition.y - lastCameraPosition.y) > 0.5 ||
+                            Math.abs(currentPosition.z - lastCameraPosition.z) > 0.5;
+
+                        if (moved) {
+                            hideVROverlay();
+                        }
+                        lastCameraPosition = currentPosition;
+                    }
+                }, 500);
 
                 // Check if all stories discovered
                 setInterval(() => {
@@ -481,6 +629,13 @@
             // Implementation would require additional A-Frame components
             console.log('Particle effect at:', position);
         }
+
+        // Keyboard shortcut to hide VR overlay (for testing)
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' || event.key === 'h') {
+                hideVROverlay();
+            }
+        });
     </script>
 </body>
 
